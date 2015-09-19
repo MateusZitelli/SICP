@@ -284,8 +284,7 @@
 (define (timed-prime-test n)
   (newline)
   (display n)
-  (let ((start-time (current-milliseconds)))
-   (start-prime-test n start-time)))
+  (start-prime-test n (current-milliseconds)))
 
 (define (start-prime-test n start-time)
   (if (prime? n)
@@ -328,3 +327,53 @@
 
 (/ (/ mean1e12 mean1e11) (sqrt 10)) ; 0.949340736233501
 (/ (/ mean1e13 mean1e12) (sqrt 10)) ; 1.01197265011344 
+
+; 1.23
+
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (next-divisor test-divisor)
+  (if (= test-divisor 2)
+    3
+    (+ test-divisor 2)))
+
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (next-divisor test-divisor)))))
+
+
+(search-for-primes 1e11 (+ 1e11 70))
+#|
+100000000003.0 *** 99.0
+100000000019.0 *** 96.0
+100000000057.0 *** 91.0
+|#
+(search-for-primes 1e12 (+ 1e12 70))
+#|
+1000000000039.0 *** 301.0
+1000000000061.0 *** 288.0
+1000000000063.0 *** 286.0
+|#
+(search-for-primes 1e13 (+ 1e13 100))
+#|
+10000000000037.0 *** 924.0
+10000000000051.0 *** 915.0
+10000000000099.0 *** 917.0
+|#
+
+(define mean1e11-2 (/ (+ 99 96 91) 3))
+(define mean1e12-2 (/ (+ 301 288 286) 3))
+(define mean1e13-2 (/ (+ 924 915 917) 3))
+
+(/ mean1e11-2 mean1e11) ; 0.594594594594595
+(/ mean1e12-2 mean1e12) ; 0.60595567867036 
+(/ mean1e13-2 mean1e13) ; 0.596407703960182 
+
+#|
+I think that the reason for the ratio don't be 0.5 is some extra costs because 
+of the extra next function calling and the if inside it be more expensive than
+the + operation.
+|#
+
