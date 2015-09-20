@@ -259,8 +259,6 @@
         ((fermat-test n) (fast-prime? n (- times 1)))
         (else #f)))
 
-(fast-prime? 73 10)
-
 ; Ex. 1.21
 (define (smallest-divisor n)
   (find-divisor n 2))
@@ -376,4 +374,34 @@ I think that the reason for the ratio don't be 0.5 is some extra costs because
 of the extra next function calling and the if inside it be more expensive than
 the + operation.
 |#
+
+; 1.24
+
+(define (start-prime-test n start-time)
+  (if (fast-prime? n 1000)
+    (report-prime (- (current-milliseconds) start-time))))
+#|
+Seing that the fermat method calculates primes with complexity O(log n)
+my expectation is that the ration between then will be log(1e18) / log(1e5) =
+= 3.6...
+|#
+
+(search-for-primes 1000000000000000000 (+ 1000000000000000000 100))
+#|
+1000000000000000003 *** 116.0
+1000000000000000009 *** 111.0
+1000000000000000031 *** 109.0
+1000000000000000079 *** 114.0
+|#
+(search-for-primes 100000 (+ 100000 100))
+#|
+100019 *** 31.0
+100043 *** 30.0
+100057 *** 30.0
+100069 *** 34.0
+|#
+
+(define mean1e18 (/ (+ 116 111 109 114) 4))
+(define mean1e5 (/ (+ 31 30 30 34) 4))
+(inexact (/ mean1e18 mean1e5)) ; Exactly 3.6
 
