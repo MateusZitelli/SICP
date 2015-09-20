@@ -405,3 +405,40 @@ my expectation is that the ration between then will be log(1e18) / log(1e5) =
 (define mean1e5 (/ (+ 31 30 30 34) 4))
 (inexact (/ mean1e18 mean1e5)) ; Exactly 3.6
 
+#|
+My data fit exactly with what was expected, the logarithm growth is due the
+expmod routine. No discrepancies where found, maybe because we're using realy
+big numbers.
+|#
+
+; 1.25
+#|
+It's not a good idea even seen that it might work. The problem of finding the
+exponentiantion result before apply the modulo operation is that this could
+result is really big numbers. In scheme the numbers have arbitrary-precision
+but operations with big numbers are expesive.
+|#
+
+; 1.26
+#|
+The expmod has log(exp) degrees of recursion for a operation where exp is the
+expoent. When each call of the expmod call itself other two times we transform
+the expmod from a linear recursive process into a tree recursive one. In tree
+recursion we have complexity O(2 ^ n) and because the exp is divided by two
+in each step this complexity drops to O(log(2 ^ n)) which is O(n).
+|#
+
+; 1.27
+(define (charmichael-test n)
+  (define (modulo-congruent-from-0-util? a)
+    (cond ((= a 1) #t)
+          ((= (expmod a n n) a) (modulo-congruent-from-0-util? (- a 1)))
+          (else #f)))
+  (modulo-congruent-from-0-util? (- n 1))) 
+
+(charmichael-test 561)
+(charmichael-test 1105)
+(charmichael-test 1729)
+(charmichael-test 2465)
+(charmichael-test 2821)
+(charmichael-test 6601)
