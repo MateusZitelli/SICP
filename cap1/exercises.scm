@@ -442,3 +442,39 @@ in each step this complexity drops to O(log(2 ^ n)) which is O(n).
 (charmichael-test 2465)
 (charmichael-test 2821)
 (charmichael-test 6601)
+
+; 1.28
+(define (square-check x m)
+  (if (and
+        (> x 1)
+        (< x (- m 1))
+        (= (remainder (* x x) m) 1))
+    0
+    (remainder (* x x) m)))
+
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (square-check (expmod base (/ exp 2) m) m))
+        (else
+          (remainder (* base (expmod base (- exp 1) m))
+                     m))))
+
+(define (miller-rabin-test n)
+  (define (try-it a)
+    (eq? (expmod a (- n 1) n) 1))
+  (try-it (+ 1 (random (- n 2)))))
+
+(miller-rabin-test 561)
+(miller-rabin-test 1105)
+(miller-rabin-test 1729)
+(miller-rabin-test 2465)
+(miller-rabin-test 2821)
+(miller-rabin-test 6601)
+
+(define (fast-prime? n times)
+  (cond ((= times 0) #t)
+        ((miller-rabin-test n) (fast-prime? n (- times 1)))
+        (else #f)))
+
+(fast-prime? 13 100)
