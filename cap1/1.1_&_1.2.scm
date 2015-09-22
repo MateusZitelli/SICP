@@ -477,4 +477,3 @@ in each step this complexity drops to O(log(2 ^ n)) which is O(n).
         ((miller-rabin-test n) (fast-prime? n (- times 1)))
         (else #f)))
 
-(fast-prime? 13 100)
